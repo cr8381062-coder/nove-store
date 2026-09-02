@@ -552,8 +552,8 @@ const APP = {
     const settings = JSON.parse(localStorage.getItem('nove_settings')) || {};
     if (settings.storeName) this.STORE_NAME = settings.storeName;
     if (settings.logo) this.STORE_LOGO = settings.logo;
-    if (settings.paypal) this.PAYPAL_CLIENT_ID = settings.paypal;
-    if (settings.google) this.GOOGLE_CLIENT_ID = settings.google;
+    if (settings.paypal && settings.paypal !== 'YOUR_PAYPAL_CLIENT_ID') this.PAYPAL_CLIENT_ID = settings.paypal;
+    if (settings.google && settings.google !== this.GOOGLE_CLIENT_ID) settings.google = this.GOOGLE_CLIENT_ID;
   },
 
   // ===== DATA =====
@@ -2143,7 +2143,7 @@ const APP = {
   saveSettings() {
     APP.STORE_NAME = document.getElementById('setting-store-name').value || 'Nove Store';
     APP.PAYPAL_CLIENT_ID = document.getElementById('setting-paypal').value;
-    APP.GOOGLE_CLIENT_ID = document.getElementById('setting-google').value;
+    APP.GOOGLE_CLIENT_ID = document.getElementById('setting-google').value || APP.GOOGLE_CLIENT_ID;
     localStorage.setItem('nove_settings', JSON.stringify({
       storeName: APP.STORE_NAME,
       logo: APP.STORE_LOGO,
