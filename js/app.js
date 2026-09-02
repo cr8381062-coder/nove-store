@@ -852,28 +852,22 @@ const APP = {
 
   demoLogin() {
     this.showToast('Google not configured - using demo login', 'error');
-    if (confirm('Demo Mode: OK = Login as Store Owner (admin), Cancel = Login as regular user')) {
-      this.currentUser = {
-        id: 'admin_' + Date.now(),
-        name: 'Store Owner',
-        email: this.ADMIN_EMAIL,
-        avatar: '',
-        isAdmin: true,
-        joinedAt: new Date().toISOString()
-      };
-    } else {
+    if (confirm('Demo Mode: Login as a regular test user? (Click OK to continue as a normal customer)')) {
       this.currentUser = {
         id: 'user_' + Date.now(),
         name: 'Test User',
-        email: 'user@example.com',
+        email: 'user_' + Date.now() + '@demo.nove',
         avatar: '',
         isAdmin: false,
         joinedAt: new Date().toISOString()
       };
+    } else {
+      return;
     }
+    this.registerUser(this.currentUser);
     localStorage.setItem('nove_user', JSON.stringify(this.currentUser));
     this.updateAuthUI();
-    this.showToast(this.t('welcome_back') + ', ' + this.currentUser.name + '!', 'success');
+    this.closeModal('auth-modal');
   },
 
   logout() {
