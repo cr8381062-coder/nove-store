@@ -780,66 +780,33 @@ const APP = {
 
   loginWithGoogle() {
     const configured = this.GOOGLE_CLIENT_ID && this.GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID';
-    if (configured && window.google && window.google.accounts) {
-      window.google.accounts.id.initialize({
-        client_id: this.GOOGLE_CLIENT_ID,
-        auto_select: false,
-        cancel_on_tap_outside: true,
-        callback: (response) => {
-          try {
-            const base64 = response.credential.split('.')[1];
-            const decoded = JSON.parse(atob(base64.replace(/-/g, '+').replace(/_/g, '/')));
-            this.finishGoogleLogin({
-              sub: decoded.sub,
-              name: decoded.name || decoded.email.split('@')[0],
-              email: decoded.email,
-              picture: decoded.picture || ''
-            });
-            this.closeModal('auth-modal');
-          } catch (e) {
-            this.showToast('Failed to read Google account', 'error');
-          }
-        }
-      });
-      window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // Fallback: use OAuth token flow if the prompt is blocked
-          const client = window.google.accounts.oauth2.initTokenClient({
-            client_id: this.GOOGLE_CLIENT_ID,
-            scope: 'openid email profile',
-            callback: (resp) => {
-              if (resp.error) {
-                this.showToast('Google sign-in cancelled', 'error');
-                return;
-              }
-              fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                headers: { Authorization: 'Bearer ' + resp.access_token }
-              })
-                .then(r => r.json())
-                .then((profile) => {
-                  if (!profile || !profile.email) throw new Error('no_profile');
-                  this.finishGoogleLogin({
-                    sub: profile.sub,
-                    name: profile.name || profile.email.split('@')[0],
-                    email: profile.email,
-                    picture: profile.picture || ''
-                  });
-                  this.closeModal('auth-modal');
-                })
-                .catch(() => {
-                  this.showToast('Failed to read Google account', 'error');
-                });
-            }
-          });
-          client.requestAccessToken();
-        }
-      });
-    } else if (configured && !window.google) {
+    if (!configured) {
+      this.showToast(this.t('google_hint'), 'error');
+      this.demoLogin();
+      return;
+    }
+    if (!window.google || !window.google.accounts) {
       this.showToast('Loading Google Sign-In...', 'success');
       this.loadGoogleSDK();
-    } else {
-      this.demoLogin();
+      return;
     }
+    window.google.accounts.id.initialize({
+      client_id: this.GOOGLE_CLIENT_ID,
+      callback: (response) => {
+        try {
+          const payload = JSON.parse(atob(response.credential.split('.')[1]));
+          this.finishGoogleLogin({
+            sub: payload.sub,
+            name: payload.name || payload.email.split('@')[0],
+            email: payload.email,
+            picture: payload.picture || ''
+          });
+        } catch (e) {
+          this.showToast('Failed to read Google account', 'error');
+        }
+      }
+    });
+    window.google.accounts.id.prompt();
   },
 
   loadGoogleSDK() {
