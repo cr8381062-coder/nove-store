@@ -5,7 +5,7 @@ const APP = {
   STORE_NAME: 'Nove Store',
   STORE_LOGO: '',
   PAYPAL_CLIENT_ID: 'AdZijgGKQiP5hkM7nWSUQgVFH4dBS8K5SuClk9n9B1NP6KHUTe84pTcjVWBF7fIe8IZ-XXxhfJ0SegzO',
-  GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID',
+  GOOGLE_CLIENT_ID: '410210397515-tv7ek2artd1jlllghmk1d3493g1gurjc.apps.googleusercontent.com',
 
   currentUser: null,
   products: [],
