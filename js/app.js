@@ -5,7 +5,7 @@ const APP = {
   STORE_NAME: 'Nove Store',
   STORE_LOGO: '',
   PAYPAL_CLIENT_ID: 'AdZijgGKQiP5hkM7nWSUQgVFH4dBS8K5SuClk9n9B1NP6KHUTe84pTcjVWBF7fIe8IZ-XXxhfJ0SegzO',
-  GOOGLE_CLIENT_ID: '430960573263-sh1nu2bt96vrttun9cu4st9q7847pfe4.apps.googleusercontent.com',
+  GOOGLE_CLIENT_ID: '410210397515-tv7ek2artd1jlllghmk1d3493g1gurjc.apps.googleusercontent.com',
 
   currentUser: null,
   products: [],
@@ -553,7 +553,9 @@ const APP = {
     if (settings.storeName) this.STORE_NAME = settings.storeName;
     if (settings.logo) this.STORE_LOGO = settings.logo;
     if (settings.paypal && settings.paypal !== 'YOUR_PAYPAL_CLIENT_ID') this.PAYPAL_CLIENT_ID = settings.paypal;
-    if (settings.google && settings.google !== this.GOOGLE_CLIENT_ID) settings.google = this.GOOGLE_CLIENT_ID;
+    // Always force the correct Google Client ID, overriding any stale saved value.
+    settings.google = this.GOOGLE_CLIENT_ID;
+    localStorage.setItem('nove_settings', JSON.stringify(settings));
   },
 
   // ===== DATA =====
@@ -2111,6 +2113,7 @@ const APP = {
     APP.STORE_NAME = document.getElementById('setting-store-name').value || 'Nove Store';
     APP.PAYPAL_CLIENT_ID = document.getElementById('setting-paypal').value;
     APP.GOOGLE_CLIENT_ID = document.getElementById('setting-google').value || APP.GOOGLE_CLIENT_ID;
+    if (!/apps\.googleusercontent\.com$/.test(APP.GOOGLE_CLIENT_ID)) APP.GOOGLE_CLIENT_ID = '410210397515-tv7ek2artd1jlllghmk1d3493g1gurjc.apps.googleusercontent.com';
     localStorage.setItem('nove_settings', JSON.stringify({
       storeName: APP.STORE_NAME,
       logo: APP.STORE_LOGO,
